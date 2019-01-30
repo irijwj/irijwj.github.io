@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+
+
+
+
+
+
+
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+    <meta charset="utf-8">
+    <link rel="apple-touch-icon" sizes="76x76" href="/apple-touch-icon.png">
+    <link rel="icon" type="image/png" href="/favicon.png">
+    <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0, shrink-to-fit=no" name="viewport">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="">
+    <meta name="author" content="jwj">
+    <meta name="keywords" content="Android Flutter">
+    <title>瞄一眼Kotlin协程机制 ~ iri-jwj</title>
+    <link rel="stylesheet" href="/css/Material_Icons.css">
+    <!-- <link rel="stylesheet" href="/css/font-awesome.css"> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/css/main.css">
+    
+        <link rel="stylesheet" href="/css/post.css">
+        
+            <link rel="stylesheet" href="/css/Prettify/tomorrow-night-eighties.min.css">
+        
+    
+</head>
+
+<body class=" sidebar-collapse">
+<nav class="navbar navbar-transparent navbar-color-on-scroll fixed-top navbar-expand-lg" color-on-scroll="100" id="sectionsNav">
+    <div class="container">
+        <div class="navbar-translate">
+            <a class="navbar-brand" href="/">
+                iri-jwj</a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+            <div class="collapse navbar-collapse">
+                <ul class="navbar-nav ml-auto">
+                    
+                        
+                            <li class="nav-item">
+                                <a class="nav-link" href="/archives/">
+                                    archives
+                                </a>
+                            </li>
+                        
+                            <li class="nav-item">
+                                <a class="nav-link" href="/about/">
+                                    about
+                                </a>
+                            </li>
+                        
+                    
+                    
+                        
+                            <li class="nav-item">
+                                <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="https://github.com/" target="_blank" data-original-title="See me here">
+                                    <i class="fa fa-github"></i>
+                                </a>
+                            </li>
+                        
+                            <li class="nav-item">
+                                <a class="nav-link" rel="tooltip" title="" data-placement="bottom" href="https://twitter.com/" target="_blank" data-original-title="See me here">
+                                    <i class="fa fa-twitter"></i>
+                                </a>
+                            </li>
+                        
+                    
+                </ul>
+            </div>
+    </div>
+</nav>
+    
+  <div class="page-header header-filter" data-parallax="true" style="background-image: url('/img/post-banner.jpg'); height: 60vh;">
+    
+      <div class="container">
+        <h1 class="title text-center post_title">瞄一眼Kotlin协程机制</h1>
+        <p class="text-center"><b>Wednesday, January 30th 2019, 4:17 pm</b></p>
+      </div>
+    
+  </div>
+
+  
+  
+  
+    <div class="row" style="margin: 0 0 0; z-index: 999;">
+  <div class="col-md-8 offset-md-1">
+    <div class="main main-raised">
+      <div class="container">
+        <div class="section">
+          <div class="post_content">
+              <p>#瞄一眼Kotlin协程机制</p>
+<ol start="0">
+<li>kotlin的协程机制 coroutines:</li>
+</ol>
+<p>协程机制在我的理解来是一种轻量级的同异步的线程机制,相比于原本的threads, 协程消耗的资源较少, 同时也让代码更整洁, 仿佛写的是一个普通的主线程代码.</p>
+<ol>
+<li>现在用到的方法:</li>
+</ol>
+<p>在android中, 存在GlobalScope.launch方法和runBlock方法, 这两个方法的区别是launch是直接执行后面的代码, launch中的代码会在自己的线程中执行.但是runBlock中的方法是需要等runBlock中的执行完成后才会执行后面的代码.</p>
+<p>GlobalScope.launch方法中,默认是会在主线程中执行,但可以指定它执行的线程,如GlobalScope.launch(Dispatchers.IO)就制定了launch会在io线程中执行. 此外GlobalScope.launch(Dispatchers.IO + CoroutineName(“123”))使用+号为线程指定一个name, 对debug有帮助.</p>
+<p>同时, launch内部也可以做到线程之间的切换. 如:</p>
+<pre><code class="kotlin">GLobalScope.launch(Dispatchers.IO){ 
+withContext(Dispatchers.MAIN){ //dosomething
+}}
+</code></pre>
+<p>这里就实现了在IO线程中切换到主线程执行部分代码,然后再回到IO线程.</p>
+<p>async与await. 这两个在别的语言作为关键字出现, 但是在kotlin中它们是作为方法出现. 结合使用的情景就是切换到异步完成耗时操作, await()实现了线程等待, 当async中返回完成时继续执行. 其次, 一个launch(Dispatchers.MAIN)中的async和await也是不会阻塞主线程的, 相当于线程的切换, 当在await时 主线程会切换到launch语句块外的后续语句继续执行, 语句块内的在await之后的语句会在async获得到返回值后切换回来继续执行.</p>
+<ol start="2">
+<li>suspend关键字</li>
+</ol>
+<p>标注在方法前, 作用是将这个方法转变为协程的方法, 即异步执行且不阻塞主线程. 但只有与协程搭配使用才有效, 直接调用是没有用的.</p>
+<p><em>关于Kotlin协程方面还有好一部分没有了解完，所以以后这篇应该还会更新</em></p>
+
+          </div>
+          <br><br>
+          <div>
+              <p>
+                      
+              </p>
+          </div>
+        </div>
+      </div>  
+    </div>
+  </div>
+  <!-- TOC -->
+  
+      <div class="">
+        <div id="toc">
+          <p class="toc-title"><i class="material-icons" style="vertical-align:middle">toc</i>Toc:</p> 
+          <div id="tocbot"></div>
+        </div>
+      </div>
+  
+</div>
+
+
+<!-- Comments -->
+<div class="row">
+    <div class="col-md-8 offset-md-2">
+    
+        
+            <div class="disqus" style="width:100%">
+    <div id="disqus_thread"></div>
+    <script>               
+        var disqus_shortname = '';
+        var disqus_config = function () {
+            this.page.url = 'http://yoursite.com/2019/01/30/Kotlin的协程机制/'; 
+            this.page.identifier = '/2019/01/30/Kotlin的协程机制/';
+        };
+        (function() { 
+            var d = document, s = d.createElement('script');
+            s.type = 'text/javascript';
+            s.src = '//'+disqus_shortname+'.disqus.com/embed.js';
+            s.setAttribute('data-timestamp', +new Date());
+            (d.head || d.body).appendChild(s);
+        })();
+    </script>
+    <noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>                                
+</div>
+        
+    
+    </div>
+</div>
+  
+
+<footer class="footer footer-default">
+        <div class="container">
+          <div class="float-left" style="padding: 15px 0;">
+              <b>heralded by someone close to you</b>
+          </div>
+          <div class="copyright float-right">
+            &copy;
+            <script>
+              document.write(new Date().getFullYear())
+            </script>&nbsp;<a href="https://hexo.io/zh-cn/" target="_blank">HEXO</a>&nbsp;<i class="material-icons">favorite_border</i>
+            <a href="https://github.com/invom/Material-T" target="_blank">Material-T</a>
+          </div>
+        </div>
+</footer>
+      <!--   Core JS Files   -->
+      <script src="/js/core/jquery.min.js?v=3.2.1"></script>
+      <script src="/js/main.js"></script>
+      <script src="/js/core/popper.min.js"></script>
+      <script src="/js/core/bootstrap-material-design.min.js"></script>
+      <script src="/js/plugins/moment.min.js"></script>
+      <!-- Control Center for Material Kit: parallax effects, scripts for the example pages etc -->
+      <script src="/js/material-kit.min.js?v=2.0.5"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/tocbot/4.4.2/tocbot.min.js"></script>
+        <script src="/js/post.js"></script>
+        <script src="/js/plugins/prettify.js"></script>
+        <script>
+            $(document).ready(function(){
+                $('pre').addClass('prettyprint linenums');
+                prettyPrint();
+            })
+        </script>
+      
+</body>
+</html>
