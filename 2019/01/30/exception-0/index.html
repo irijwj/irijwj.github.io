@@ -19,7 +19,7 @@
     <meta name="description" content="">
     <meta name="author" content="jwj">
     <meta name="keywords" content="Android Flutter">
-    <title>iri-jwj</title>
+    <title>java exception ~ iri-jwj</title>
     <link rel="stylesheet" href="/css/Material_Icons.css">
     <!-- <link rel="stylesheet" href="/css/font-awesome.css"> -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
@@ -85,8 +85,8 @@
   <div class="page-header header-filter" data-parallax="true" style="background-image: url('/img/post-banner.jpg'); height: 60vh;">
     
       <div class="container">
-        <h1 class="title text-center post_title"></h1>
-        <p class="text-center"><b>Wednesday, January 30th 2019, 3:37 pm</b></p>
+        <h1 class="title text-center post_title">java exception</h1>
+        <p class="text-center"><b>Wednesday, January 30th 2019, 4:00 pm</b></p>
       </div>
     
   </div>
@@ -111,50 +111,50 @@
 <p>从接口中实现的方法可以不用显示地声明抛出的异常，同时子类中继承的对应方法只可以增加子Exception（即基类中方法抛出的异常的子类）</p>
 <pre><code class="java">public class StormyInning extends Inning implements Storm {
 
-    StormyInning() throws RainedOut, BaseBallException { //这里是构造函数，显示声明BaseBallException，同时也可以增加其它的Exception如RainedOut
-   super();
- }
+StormyInning() throws RainedOut, BaseBallException { //这里是构造函数，显示声明BaseBallException，同时也可以增加其它的Exception如RainedOut
+super();
+}
 
-   @Override
-    void atBat() {//从基类中继承的函数，可以不显示声明抛出的异常
-        //throw new Strike();
-    }
+@Override
+void atBat() {//从基类中继承的函数，可以不显示声明抛出的异常
+//throw new Strike();
+}
 
- @Override
-  void Walk() {//从基类中继承的函数，由于没有在基类中没有声明抛出任何异常，因此也不能新增抛出的异常
-        super.Walk();
-    }
+@Override
+void Walk() {//从基类中继承的函数，由于没有在基类中没有声明抛出任何异常，因此也不能新增抛出的异常
+super.Walk();
+}
 
-   @Override
-    public void event() { }//这个方法在基类中和接口中都有定义，但继承的将是基类的方法，也就不会抛出任何异常
+@Override
+public void event() { }//这个方法在基类中和接口中都有定义，但继承的将是基类的方法，也就不会抛出任何异常
 
-   @Override
-    public void rainHard() throws ChildRainedOut, RainedOut { }//从接口中实现的方法，可以增加新的异常抛出声明，但新的异常必须是
-    //接口中定义的异常的子类
-   public static void main(String[] args) {
-        try {
-            StormyInning si = new StormyInning();
-            si.atBat();
-            si.Walk();
-        } catch (PopFoul p) {}
-        catch (BaseBallException e) { }
-        catch (RainedOut f) { }
+@Override
+public void rainHard() throws ChildRainedOut, RainedOut { }//从接口中实现的方法，可以增加新的异常抛出声明，但新的异常必须是
+//接口中定义的异常的子类
+public static void main(String[] args) {
+try {
+StormyInning si = new StormyInning();
+si.atBat();
+si.Walk();
+} catch (PopFoul p) {}
+catch (BaseBallException e) { }
+catch (RainedOut f) { }
 
-        try {
-           Inning i = new StormyInning();
-            i.atBat();
-            i.Walk();
-        } catch (Strike s) { }
-        catch (Foul f) { }
-        catch (RainedOut r) { }
-        catch (BaseBallException b) { }
+try {
+Inning i = new StormyInning();
+i.atBat();
+i.Walk();
+} catch (Strike s) { }
+catch (Foul f) { }
+catch (RainedOut r) { }
+catch (BaseBallException b) { }
 
-        try{
-            StormyInning si = new StormyInning();
-            si.event();
-        }catch (RainedOut r){}
-        catch (BaseBallException b){}
-    }
+try{
+StormyInning si = new StormyInning();
+si.event();
+}catch (RainedOut r){}
+catch (BaseBallException b){}
+}
 }
 
 class BaseBallException extends Exception { }
@@ -164,10 +164,10 @@ class Foul extends BaseBallException { }
 class Strike extends BaseBallException { }
 
 abstract class Inning {
-    Inning() throws BaseBallException { }
-    abstract void atBat() throws Strike, Foul;
-    void event() throws BaseBallException { }
-    void Walk() {}
+Inning() throws BaseBallException { }
+abstract void atBat() throws Strike, Foul;
+void event() throws BaseBallException { }
+void Walk() {}
 }
 
 class StormException extends Exception { }
@@ -179,9 +179,9 @@ class PopFoul extends Foul { }
 class ChildRainedOut extends RainedOut { }
 
 interface Storm {
-    void event() throws RainedOut;
+void event() throws RainedOut;
 
-    void rainHard() throws RainedOut;
+void rainHard() throws RainedOut;
 }
 </code></pre>
 
@@ -218,8 +218,8 @@ interface Storm {
     <script>               
         var disqus_shortname = '';
         var disqus_config = function () {
-            this.page.url = 'http://yoursite.com/2019/01/30/Exception/'; 
-            this.page.identifier = '/2019/01/30/Exception/';
+            this.page.url = 'http://yoursite.com/2019/01/30/exception-0/'; 
+            this.page.identifier = '/2019/01/30/exception-0/';
         };
         (function() { 
             var d = document, s = d.createElement('script');
